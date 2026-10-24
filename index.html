@@ -1,1320 +1,400 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bin QR Generator</title>
 
 <style>
-
-/* =========================
-   RESET
-========================= */
-
-*{
-    box-sizing:border-box;
-    -webkit-tap-highlight-color:transparent;
+* {
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
 }
 
-
-/* =========================
-   BODY
-========================= */
-
-body{
-    margin:0;
-    padding:0;
-
-    background:#f3f4f6;
-    color:#111827;
-
-    font-family:Arial, Helvetica, sans-serif;
+body {
+    margin: 0;
+    background: #f3f4f6;
+    color: #111827;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
-
-/* =========================
-   APP
-========================= */
-
-.app{
-    width:100%;
-    max-width:620px;
-
-    margin:0 auto;
-
-    padding:16px 12px 30px;
+.app {
+    width: 100%;
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 16px 12px 30px;
 }
 
-
-/* =========================
-   HEADER
-========================= */
-
-h1{
-    text-align:center;
-
-    margin:0 0 4px;
-
-    font-size:26px;
-    font-weight:800;
+h1 {
+    text-align: center;
+    margin: 0 0 4px;
+    font-size: 26px;
+    font-weight: 800;
 }
 
-.sub{
-    text-align:center;
-
-    margin-bottom:16px;
-
-    color:#6b7280;
-
-    font-size:13px;
+.sub {
+    text-align: center;
+    margin-bottom: 16px;
+    color: #6b7280;
+    font-size: 13px;
 }
 
-
-/* =========================
-   CARD
-========================= */
-
-.card{
-    background:#ffffff;
-
-    border-radius:18px;
-
-    padding:16px;
-
-    margin-bottom:14px;
-
-    box-shadow:
-        0 3px 12px rgba(0,0,0,0.07);
+.card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.07);
 }
 
-
-/* =========================
-   SECTION TITLE
-========================= */
-
-.title{
-    font-size:16px;
-
-    font-weight:800;
-
-    margin-bottom:9px;
+.title {
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 9px;
 }
 
-
-/* =========================
-   GRID
-========================= */
-
-.grid{
-    display:grid;
-
-    grid-template-columns:
-        repeat(4, 1fr);
-
-    gap:7px;
+.section-title {
+    margin-top: 16px;
 }
 
-
-/* =========================
-   BUTTON
-========================= */
-
-button{
-    border:none;
-
-    border-radius:10px;
-
-    background:#eef0f3;
-
-    color:#111827;
-
-    min-height:44px;
-
-    font-size:15px;
-
-    font-weight:700;
-
-    cursor:pointer;
-
-    transition:
-        background .15s,
-        transform .1s;
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
 }
 
-button:active{
-    transform:scale(.96);
+.rack-grid,
+.level-grid,
+.pos-grid {
+    grid-template-columns: repeat(6, 1fr);
 }
 
-
-/* =========================
-   ACTIVE BUTTON
-========================= */
-
-button.active{
-    background:#111827;
-
-    color:#ffffff;
+button {
+    border: none;
+    border-radius: 10px;
+    background: #eef0f3;
+    color: #111827;
+    min-height: 44px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
 }
 
-
-/* =========================
-   RACK GRID
-========================= */
-
-.rack-grid{
-    grid-template-columns:
-        repeat(6, 1fr);
+button:active {
+    transform: scale(.96);
 }
 
-
-/* =========================
-   LEVEL GRID
-========================= */
-
-.level-grid{
-    grid-template-columns:
-        repeat(6, 1fr);
+button.active {
+    background: #111827;
+    color: #fff;
 }
 
-
-/* =========================
-   POSITION GRID
-========================= */
-
-.pos-grid{
-    grid-template-columns:
-        repeat(6, 1fr);
+.qr-card {
+    text-align: center;
+    padding-top: 18px;
+    padding-bottom: 18px;
 }
 
-
-/* =========================
-   QR CARD
-========================= */
-
-.qr-card{
-    text-align:center;
-
-    padding-top:18px;
-    padding-bottom:18px;
+.qr-label {
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 14px;
+    overflow-wrap: anywhere;
 }
 
-
-/* =========================
-   QR LABEL
-========================= */
-
-.qr-label{
-    font-size:20px;
-
-    font-weight:800;
-
-    margin-bottom:14px;
-
-    word-break:break-all;
+#qrcode {
+    min-height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-
-/* =========================
-   QR BOX
-========================= */
-
-#qrcode{
-    min-height:250px;
-
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
+#qrcode img,
+#qrcode canvas {
+    max-width: 100%;
+    height: auto;
 }
 
-
-/* QR IMAGE */
-
-#qrcode img{
-    width:250px !important;
-    height:250px !important;
-
-    display:block;
+.note {
+    margin-top: 12px;
+    color: #6b7280;
+    font-size: 12px;
 }
 
-
-/* =========================
-   NOTE
-========================= */
-
-.note{
-    margin-top:12px;
-
-    color:#6b7280;
-
-    font-size:12px;
+.manual-area {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 2px;
 }
 
-
-/* =========================
-   MANUAL AREA
-========================= */
-
-.manual-area{
-    display:flex;
-
-    justify-content:flex-end;
-
-    margin-top:2px;
+.manual-btn {
+    min-height: 42px;
+    padding: 8px 16px;
+    border-radius: 22px;
+    background: #fff;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    font-size: 14px;
 }
 
-
-/* =========================
-   MANUAL BUTTON
-========================= */
-
-.manual-btn{
-    min-height:42px;
-
-    padding:8px 16px;
-
-    border-radius:22px;
-
-    background:#ffffff;
-
-    border:1px solid #d1d5db;
-
-    color:#374151;
-
-    font-size:14px;
-
-    font-weight:700;
+.manual-box {
+    display: none;
+    margin-top: 10px;
+    background: #fff;
+    border-radius: 16px;
+    padding: 13px;
+    border: 1px solid #e5e7eb;
 }
 
-
-/* =========================
-   MANUAL BOX
-========================= */
-
-.manual-box{
-    display:none;
-
-    margin-top:10px;
-
-    background:#ffffff;
-
-    border-radius:16px;
-
-    padding:13px;
-
-    border:1px solid #e5e7eb;
-
-    box-shadow:
-        0 2px 8px rgba(0,0,0,.05);
+.manual-box.show {
+    display: block;
 }
 
-
-/* SHOW */
-
-.manual-box.show{
-    display:block;
+.manual-input {
+    width: 100%;
+    height: 48px;
+    padding: 0 13px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    outline: none;
+    font-size: 16px;
+    color: #111827;
 }
 
-
-/* =========================
-   MANUAL INPUT
-========================= */
-
-.manual-input{
-    width:100%;
-
-    height:48px;
-
-    padding:0 13px;
-
-    border:1px solid #d1d5db;
-
-    border-radius:10px;
-
-    outline:none;
-
-    font-size:16px;
-
-    color:#111827;
+.manual-input:focus {
+    border-color: #111827;
 }
 
-.manual-input:focus{
-    border-color:#111827;
-}
-
-
-/* =========================
-   SMALL SCREEN
-========================= */
-
-@media(max-width:420px){
-
-    .app{
-        padding:12px 9px 25px;
+@media(max-width:420px) {
+    .app {
+        padding: 12px 9px 25px;
     }
 
-    h1{
-        font-size:23px;
+    h1 {
+        font-size: 23px;
     }
 
-    .card{
-        padding:13px;
+    .card {
+        padding: 13px;
     }
 
-    .grid{
-        grid-template-columns:
-            repeat(3, 1fr);
+    .grid {
+        grid-template-columns: repeat(3, 1fr);
     }
-
-    .rack-grid{
-        grid-template-columns:
-            repeat(5, 1fr);
-    }
-
-    .level-grid{
-        grid-template-columns:
-            repeat(5, 1fr);
-    }
-
-    .pos-grid{
-        grid-template-columns:
-            repeat(3, 1fr);
-    }
-
-    button{
-        min-height:42px;
-
-        font-size:14px;
-    }
-
-    .qr-label{
-        font-size:18px;
-    }
-
-    #qrcode img{
-        width:230px !important;
-        height:230px !important;
-    }
-
-}
-
-
-/* =========================
-   VERY SMALL SCREEN
-========================= */
-
-@media(max-width:330px){
 
     .rack-grid,
-    .level-grid{
-        grid-template-columns:
-            repeat(4, 1fr);
+    .level-grid {
+        grid-template-columns: repeat(5, 1fr);
     }
 
+    .pos-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    button {
+        min-height: 42px;
+        font-size: 14px;
+    }
+
+    .qr-label {
+        font-size: 18px;
+    }
 }
 
+@media(max-width:330px) {
+    .rack-grid,
+    .level-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
 </style>
-
 </head>
 
-
 <body>
-
-
 <div class="app">
 
-
-    <!-- =========================
-         HEADER
-    ========================== -->
-
-    <h1>
-        Bin QR Generator
-    </h1>
-
-    <div class="sub">
-        Fast phone-friendly location QR
-    </div>
-
-
-
-    <!-- =========================
-         LOCATION CARD
-    ========================== -->
+    <h1>Bin QR Generator</h1>
+    <div class="sub">Fast phone-friendly location QR</div>
 
     <section class="card">
 
+        <div class="title">Aisle</div>
+        <div id="aisles" class="grid"></div>
 
-        <!-- AISLE -->
+        <div class="title section-title">Rack</div>
+        <div id="racks" class="grid rack-grid"></div>
 
-        <div class="title">
-            Aisle
-        </div>
+        <div class="title section-title">Level</div>
+        <div id="levels" class="grid level-grid"></div>
 
-        <div
-            id="aisles"
-            class="grid">
-        </div>
-
-
-
-        <!-- RACK -->
-
-        <div
-            class="title"
-            style="margin-top:16px;">
-
-            Rack
-
-        </div>
-
-        <div
-            id="racks"
-            class="grid rack-grid">
-        </div>
-
-
-
-        <!-- LEVEL -->
-
-        <div
-            class="title"
-            style="margin-top:16px;">
-
-            Level
-
-        </div>
-
-        <div
-            id="levels"
-            class="grid level-grid">
-        </div>
-
-
-
-        <!-- POSITION -->
-
-        <div
-            class="title"
-            style="margin-top:16px;">
-
-            Position
-
-        </div>
-
-        <div
-            id="positions"
-            class="grid pos-grid">
-        </div>
-
+        <div class="title section-title">Position</div>
+        <div id="positions" class="grid pos-grid"></div>
 
     </section>
-
-
-
-    <!-- =========================
-         QR CARD
-    ========================== -->
 
     <section class="card qr-card">
-
-
-        <div
-            id="qrLabel"
-            class="qr-label">
-
-            F0-A01-001-01-A
-
-        </div>
-
-
+        <div id="qrLabel" class="qr-label">F0-A1-001-01-A</div>
         <div id="qrcode"></div>
-
-
         <div class="note">
-
             QR automatically updates when location changes.
-
         </div>
-
-
     </section>
 
-
-
-    <!-- =========================
-         MANUAL QR BUTTON
-    ========================== -->
-
     <div class="manual-area">
-
-        <button
-            id="manualToggle"
-            class="manual-btn">
-
+        <button id="manualToggle" class="manual-btn">
             ＋ Manual QR
-
         </button>
-
     </div>
 
-
-
-    <!-- =========================
-         MANUAL INPUT
-    ========================== -->
-
-    <div
-        id="manualBox"
-        class="manual-box">
-
+    <div id="manualBox" class="manual-box">
         <input
             id="manualInput"
             class="manual-input"
             type="text"
             autocomplete="off"
             placeholder="Enter any text / QR value">
-
     </div>
-
 
 </div>
 
-
-
-<!-- =================================================
-     QR CODE LIBRARY
-================================================= -->
-
-<script
-src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js">
-</script>
-
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <script>
+document.addEventListener("DOMContentLoaded", function() {
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function(){
+    const aisles = Array.from(
+        { length: 21 },
+        (_, i) => "A" + (i + 1)
+    );
 
+    const racks = Array.from(
+        { length: 28 },
+        (_, i) => String(i + 1).padStart(3, "0")
+    );
 
-        /* =================================================
-           CONFIG
-        ================================================= */
+    const levels = Array.from(
+        { length: 11 },
+        (_, i) => String(i + 1).padStart(2, "0")
+    );
 
-        const config = {
+    const positions = ["A", "B", "C", "D", "E", "F"];
 
-            A01:{
-                r:28,
-                l:11
-            },
+    let selected = {
+        aisle: "A1",
+        rack: "001",
+        level: "01",
+        pos: "A"
+    };
 
-            A02:{
-                r:28,
-                l:11
-            },
+    let manualMode = false;
 
-            A03:{
-                r:28,
-                l:11
-            },
+    const $ = id => document.getElementById(id);
 
-            A04:{
-                r:28,
-                l:11
-            },
+    function makeButtons(containerId, items, key) {
+        const container = $(containerId);
+        container.innerHTML = "";
 
-            A05:{
-                r:28,
-                l:11
-            },
+        items.forEach(value => {
+            const button = document.createElement("button");
+            button.type = "button";
+            button.textContent = value;
 
-            A06:{
-                r:28,
-                l:11
-            },
-
-            /* A07 = 26 RACKS */
-
-            A07:{
-                r:26,
-                l:11
-            },
-
-            A08:{
-                r:28,
-                l:11
-            },
-
-            A09:{
-                r:28,
-                l:11
-            },
-
-            A10:{
-                r:28,
-                l:11
-            },
-
-            /* A11 = 6 POSITIONS */
-
-            A11:{
-                r:12,
-                l:12
-            },
-
-            A12:{
-                r:28,
-                l:11
-            },
-
-            A13:{
-                r:12,
-                l:9
-            },
-
-            A14:{
-                r:12,
-                l:9
-            },
-
-            A15:{
-                r:12,
-                l:9
-              },
-
-            A16:{
-                r:12,
-                l:9
-              },
-
-            A17:{
-                r:12,
-                l:9
-            },
-             
-             A18:{
-                r:12,
-                l:9
-            },
-             
-             A19:{
-                r:12,
-                l:9
-             
-             },
-             
-             A20:{
-                r:12,
-                l:9
-              
-            FV01:{
-                r:17,
-                l:12
-            },
-
-            CR01:{
-                r:28,
-                l:11
-            },
-
-            FR01:{
-                r:17,
-                l:9
+            if (selected[key] === value && !manualMode) {
+                button.classList.add("active");
             }
 
-        };
+            button.addEventListener("click", function() {
+                selected[key] = value;
+                manualMode = false;
 
+                $("manualInput").value = "";
 
+                renderAll();
+                updateLocation();
+            });
 
-        /* =================================================
-           CURRENT SELECTION
-        ================================================= */
-
-        let selected = {
-
-            aisle:"A01",
-
-            rack:"001",
-
-            level:"01",
-
-            pos:"A"
-
-        };
-
-
-
-        /* =================================================
-           ELEMENT HELPER
-        ================================================= */
-
-        function $(id){
-
-            return document.getElementById(id);
-
-        }
-
-
-
-        /* =================================================
-           GENERATE BUTTONS
-        ================================================= */
-
-        function makeButtons(
-            containerId,
-            items,
-            key
-        ){
-
-            const container =
-                $(containerId);
-
-
-            container.innerHTML =
-                "";
-
-
-            items.forEach(
-                function(value){
-
-
-                    const button =
-                        document.createElement("button");
-
-
-                    button.type =
-                        "button";
-
-
-                    button.textContent =
-                        value;
-
-
-                    /* ACTIVE */
-
-                    if(
-                        selected[key] === value
-                    ){
-
-                        button.classList.add(
-                            "active"
-                        );
-
-                    }
-
-
-                    /* CLICK */
-
-                    button.addEventListener(
-                        "click",
-                        function(){
-
-
-                            selected[key] =
-                                value;
-
-
-
-                            /* =========================
-                               AISLE CHANGED
-                            ========================== */
-
-                            if(
-                                key === "aisle"
-                            ){
-
-                                selected.rack =
-                                    "001";
-
-                                selected.level =
-                                    "01";
-
-                                selected.pos =
-                                    "A";
-
-
-                                renderRacks();
-
-                                renderLevels();
-
-                                renderPositions();
-
-                            }
-
-
-
-                            /* UPDATE CURRENT GROUP */
-
-                            makeButtons(
-                                containerId,
-                                items,
-                                key
-                            );
-
-
-                            /* UPDATE QR */
-
-                            updateLocation();
-
-                        }
-                    );
-
-
-                    container.appendChild(
-                        button
-                    );
-
-                }
-            );
-
-        }
-
-
-
-        /* =================================================
-           AISLES
-        ================================================= */
-
-        function renderAisles(){
-
-            makeButtons(
-
-                "aisles",
-
-                Object.keys(config),
-
-                "aisle"
-
-            );
-
-        }
-
-
-
-        /* =================================================
-           RACKS
-        ================================================= */
-
-        function renderRacks(){
-
-            const total =
-                config[selected.aisle].r;
-
-
-            const racks =
-                [];
-
-
-            for(
-                let i = 1;
-                i <= total;
-                i++
-            ){
-
-                racks.push(
-                    String(i).padStart(3,"0")
-                );
-
-            }
-
-
-            makeButtons(
-
-                "racks",
-
-                racks,
-
-                "rack"
-
-            );
-
-        }
-
-
-
-        /* =================================================
-           LEVELS
-        ================================================= */
-
-        function renderLevels(){
-
-            const total =
-                config[selected.aisle].l;
-
-
-            const levels =
-                [];
-
-
-            for(
-                let i = 1;
-                i <= total;
-                i++
-            ){
-
-                levels.push(
-                    String(i).padStart(2,"0")
-                );
-
-            }
-
-
-            makeButtons(
-
-                "levels",
-
-                levels,
-
-                "level"
-
-            );
-
-        }
-
-
-
-        /* =================================================
-           POSITIONS
-        ================================================= */
-
-        function renderPositions(){
-
-            let positions;
-
-
-            /*
-               ONLY A11:
-
-               A B C D E F
-            */
-
-            if(
-                selected.aisle === "A11"
-            ){
-
-                positions = [
-                    "A",
-                    "B",
-                    "C",
-                    "D",
-                    "E",
-                    "F"
-                ];
-
-            }
-
-            /*
-               ALL OTHER AISLES:
-
-               A B C D E F 
-            */
-
-            else{
-
-                positions = [
-                    "A",
-                    "B",
-                    "C"
-                    "D"
-                    "E"
-                    "F"
-                  
-
-                ];
-
-            }
-
-
-            /*
-               Safety check
-            */
-
-            if(
-                !positions.includes(
-                    selected.pos
-                )
-            ){
-
-                selected.pos =
-                    "A";
-
-            }
-
-
-            makeButtons(
-
-                "positions",
-
-                positions,
-
-                "pos"
-
-            );
-
-        }
-
-
-
-        /* =================================================
-           GENERATE QR
-        ================================================= */
-
-        function generateQR(code){
-
-            code =
-                String(code || "")
-                .trim();
-
-
-            if(!code){
-
-                return;
-
-            }
-
-
-            const qrBox =
-                $("qrcode");
-
-
-            const qrLabel =
-                $("qrLabel");
-
-
-            /*
-               Update label
-            */
-
-            qrLabel.textContent =
-                code;
-
-
-            /*
-               Clear previous QR
-            */
-
-            qrBox.innerHTML =
-                "";
-
-
-            /*
-               Check QR library
-            */
-
-            if(
-                typeof QRCode === "undefined"
-            ){
-
-                qrBox.innerHTML =
-
-                    "<div style='font-size:13px;color:#777;'>QR library could not load.</div>";
-
-                return;
-
-            }
-
-
-            /*
-               Create QR
-            */
-
-            new QRCode(
-
-                qrBox,
-
-                {
-
-                    text:code,
-
-                    width:250,
-
-                    height:250,
-
-                    correctLevel:
-                        QRCode.CorrectLevel.H
-
-                }
-
-            );
-
-        }
-
-
-
-        /* =================================================
-           UPDATE LOCATION
-        ================================================= */
-
-        function updateLocation(){
-
-            const code =
-
-                "F0-" +
-                selected.aisle +
-                "-" +
-                selected.rack +
-                "-" +
-                selected.level +
-                "-" +
-                selected.pos;
-
-
-            generateQR(code);
-
-        }
-
-
-
-        /* =================================================
-           MANUAL QR TOGGLE
-        ================================================= */
-
-        $("manualToggle")
-        .addEventListener(
-            "click",
-            function(){
-
-
-                const box =
-                    $("manualBox");
-
-
-                box.classList.toggle(
-                    "show"
-                );
-
-
-                if(
-                    box.classList.contains(
-                        "show"
-                    )
-                ){
-
-                    $("manualInput").focus();
-
-                }
-
-            }
-        );
-
-
-
-        /* =================================================
-           MANUAL QR AUTO GENERATE
-        ================================================= */
-
-        $("manualInput")
-        .addEventListener(
-            "input",
-            function(){
-
-
-                const value =
-                    this.value.trim();
-
-
-                /*
-                   Don't generate
-                   if empty
-                */
-
-                if(!value){
-
-                    return;
-
-                }
-
-
-                /*
-                   Automatically
-                   generate QR
-                */
-
-                generateQR(value);
-
-            }
-        );
-
-
-
-        /* =================================================
-           ENTER KEY
-        ================================================= */
-
-        $("manualInput")
-        .addEventListener(
-            "keydown",
-            function(event){
-
-
-                if(
-                    event.key === "Enter"
-                ){
-
-                    const value =
-                        this.value.trim();
-
-
-                    if(!value){
-
-                        return;
-
-                    }
-
-
-                    generateQR(value);
-
-
-                    /*
-                       Scroll QR into view
-                    */
-
-                    $("qrcode")
-                    .scrollIntoView({
-
-                        behavior:"smooth",
-
-                        block:"center"
-
-                    });
-
-                }
-
-            }
-        );
-
-
-
-        /* =================================================
-           START APPLICATION
-        ================================================= */
-
-        renderAisles();
-
-        renderRacks();
-
-        renderLevels();
-
-        renderPositions();
-
-        updateLocation();
-
-
+            container.appendChild(button);
+        });
     }
-);
 
+    function renderAll() {
+        makeButtons("aisles", aisles, "aisle");
+        makeButtons("racks", racks, "rack");
+        makeButtons("levels", levels, "level");
+        makeButtons("positions", positions, "pos");
+    }
+
+    function generateQR(value) {
+        value = String(value || "").trim();
+
+        if (!value) return;
+
+        $("qrLabel").textContent = value;
+        $("qrcode").innerHTML = "";
+
+        if (typeof QRCode === "undefined") {
+            $("qrcode").textContent =
+                "QR library could not load. Check your internet connection.";
+            return;
+        }
+
+        new QRCode($("qrcode"), {
+            text: value,
+            width: 250,
+            height: 250,
+            correctLevel: QRCode.CorrectLevel.H
+        });
+    }
+
+    function updateLocation() {
+        const code =
+            "F0-" +
+            selected.aisle + "-" +
+            selected.rack + "-" +
+            selected.level + "-" +
+            selected.pos;
+
+        generateQR(code);
+    }
+
+    $("manualToggle").addEventListener("click", function() {
+        $("manualBox").classList.toggle("show");
+
+        if ($("manualBox").classList.contains("show")) {
+            $("manualInput").focus();
+        }
+    });
+
+    $("manualInput").addEventListener("input", function() {
+        const value = this.value.trim();
+
+        if (value) {
+            manualMode = true;
+            renderAll();
+            generateQR(value);
+        } else {
+            manualMode = false;
+            renderAll();
+            updateLocation();
+        }
+    });
+
+    $("manualInput").addEventListener("keydown", function(event) {
+        if (event.key === "Enter" && this.value.trim()) {
+            generateQR(this.value.trim());
+
+            $("qrcode").scrollIntoView({
+                behavior: "smooth",
+                block: "center"
+            });
+        }
+    });
+
+    renderAll();
+    updateLocation();
+
+});
 </script>
-
-
 </body>
-
 </html>
